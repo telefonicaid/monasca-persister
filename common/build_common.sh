@@ -27,12 +27,20 @@ if [ ! -r "${POM_FILE}" ]; then
     PATH=$(dirname $MVN):$PATH
 fi
 
+# Release of monasca-common to be downloaded
+case "$VERSION" in
+1.1.0)  TAG=0.0.6;;
+1.0.0)  TAG=2015.1;;
+*)      TAG=master;;
+esac
+
 # This should only be done on the stack forge system by $CI_USER ("jenkins")
 if [ "${BUILD_COMMON}" = "true" ]; then
-    if [ ! -d monasca-common ]; then
-        git clone https://github.com/openstack/monasca-common
+    if [ ! -d monasca-common-$TAG ]; then
+        curl -sL https://github.com/openstack/monasca-common/archive/${TAG}.tar.gz -o monasca-common.tar.gz
+        tar -xzf monasca-common.tar.gz
     fi
-    cd monasca-common
+    cd monasca-common-$TAG
     ${MVN} clean
     ${MVN} install
 fi

@@ -1,4 +1,4 @@
-monasca-common
+monasca-common*
 target
 *.classpath
 *.project
