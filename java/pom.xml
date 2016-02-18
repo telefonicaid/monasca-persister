@@ -6,8 +6,8 @@
 
     <groupId>monasca</groupId>
     <artifactId>monasca-persister</artifactId>
-    <version>1.1.0-SNAPSHOT</version>
-    <url>http://github.com/openstack/monasca-persister</url>
+    <version>1.1.0-Release-0.1.14-FIWARE</version>
+    <url>http://github.com/telefonicaid/monasca-persister</url>
     <packaging>jar</packaging>
 
     <prerequisites>
@@ -33,8 +33,8 @@
 
     <!--Needed for buildnumber-maven-plugin-->
     <scm>
-        <connection>scm:git:git@github.com:openstack/monasca-persister</connection>
-        <developerConnection>scm:git:git@github.com:openstack/monasca-persister
+        <connection>scm:git:git@github.com:telefonicaid/monasca-persister</connection>
+        <developerConnection>scm:git:git@github.com:telefonicaid/monasca-persister
         </developerConnection>
     </scm>
 
