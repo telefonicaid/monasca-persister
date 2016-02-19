@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Hewlett-Packard Development Company, L.P.
+ * Copyright (c) 2016 Telefónica I+D
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package monasca.persister.consumer;
 
 import com.google.inject.assistedinject.Assisted;
 import monasca.persister.pipeline.ManagedPipeline;
 
-public interface KafkaConsumerRunnableBasicFactory<T> {
+public interface KafkaConsumerRunnableExtendedFactory<T> {
 
-  KafkaConsumerRunnableBasic<T> create(
+  KafkaConsumerRunnableExtended<T> create(
       ManagedPipeline<T> pipeline,
       KafkaChannel kafkaChannel,
-      @Assisted("threadId") String threadId);
+      @Assisted("threadId") String threadId,
+      @Assisted("remoteEndpoint") String remoteEndpoint);
 
 }

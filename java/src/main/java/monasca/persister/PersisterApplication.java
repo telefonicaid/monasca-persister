@@ -44,6 +44,8 @@ import monasca.persister.consumer.KafkaConsumer;
 import monasca.persister.consumer.KafkaConsumerFactory;
 import monasca.persister.consumer.KafkaConsumerRunnableBasic;
 import monasca.persister.consumer.KafkaConsumerRunnableBasicFactory;
+import monasca.persister.consumer.KafkaConsumerRunnableExtended;
+import monasca.persister.consumer.KafkaConsumerRunnableExtendedFactory;
 import monasca.persister.healthcheck.SimpleHealthCheck;
 import monasca.persister.pipeline.ManagedPipeline;
 import monasca.persister.pipeline.ManagedPipelineFactory;
@@ -100,6 +102,9 @@ public class PersisterApplication extends Application<PersisterConfig> {
     // Sample health check.
     environment.healthChecks().register("test-health-check", new SimpleHealthCheck());
 
+    // Optional forwarding of metrics to a remote UDP endpoint
+    final String remoteEndpoint = configuration.getMetricForwardingConfig().getRemoteEndpoint();
+
     final KafkaChannelFactory kafkaChannelFactory = injector.getInstance(KafkaChannelFactory.class);
 
     final ManagedConsumerFactory<MetricEnvelope[]> metricManagedConsumerFactory =
@@ -109,10 +114,8 @@ public class PersisterApplication extends Application<PersisterConfig> {
     final KafkaConsumerFactory<MetricEnvelope[]> kafkaMetricConsumerFactory =
         injector.getInstance(Key.get(new TypeLiteral<KafkaConsumerFactory<MetricEnvelope[]>>(){}));
 
-    final KafkaConsumerRunnableBasicFactory<MetricEnvelope[]> kafkaMetricConsumerRunnableBasicFactory =
-        injector.getInstance(
-            Key.get(new TypeLiteral<KafkaConsumerRunnableBasicFactory<MetricEnvelope[]>>() {
-            }));
+    final KafkaConsumerRunnableExtendedFactory<MetricEnvelope[]> kafkaMetricConsumerRunnableExtendedFactory =
+        injector.getInstance(Key.get(new TypeLiteral<KafkaConsumerRunnableExtendedFactory<MetricEnvelope[]>>() {}));
 
     ThreadFactory threadFactory = new ThreadFactoryBuilder()
         .setDaemon(true)
@@ -133,11 +136,11 @@ public class PersisterApplication extends Application<PersisterConfig> {
       final ManagedPipeline<MetricEnvelope[]> managedMetricPipeline =
           getMetricPipeline(configuration, threadId, injector);
 
-      KafkaConsumerRunnableBasic<MetricEnvelope[]> kafkaMetricConsumerRunnableBasic =
-          kafkaMetricConsumerRunnableBasicFactory.create(managedMetricPipeline, kafkaMetricChannel, threadId);
+      KafkaConsumerRunnableExtended<MetricEnvelope[]> kafkaMetricConsumerRunnableExtended =
+          kafkaMetricConsumerRunnableExtendedFactory.create(managedMetricPipeline, kafkaMetricChannel, threadId, remoteEndpoint);
 
       final KafkaConsumer<MetricEnvelope[]> kafkaMetricConsumer =
-          kafkaMetricConsumerFactory.create(kafkaMetricConsumerRunnableBasic, threadId, executorService);
+          kafkaMetricConsumerFactory.create(kafkaMetricConsumerRunnableExtended, threadId, executorService);
 
       ManagedConsumer<MetricEnvelope[]> managedMetricConsumer =
           metricManagedConsumerFactory.create(kafkaMetricConsumer, threadId);
@@ -152,11 +155,10 @@ public class PersisterApplication extends Application<PersisterConfig> {
 
     final KafkaConsumerFactory<AlarmStateTransitionedEvent>
         kafkaAlarmStateTransitionConsumerFactory =
-        injector.getInstance(Key.get(new TypeLiteral<KafkaConsumerFactory<AlarmStateTransitionedEvent>>() { }));
+        injector.getInstance(Key.get(new TypeLiteral<KafkaConsumerFactory<AlarmStateTransitionedEvent>>() {}));
 
     final KafkaConsumerRunnableBasicFactory<AlarmStateTransitionedEvent> kafkaAlarmStateTransitionConsumerRunnableBasicFactory =
-        injector.getInstance(Key.get(new TypeLiteral<KafkaConsumerRunnableBasicFactory
-            <AlarmStateTransitionedEvent>>(){}))      ;
+        injector.getInstance(Key.get(new TypeLiteral<KafkaConsumerRunnableBasicFactory<AlarmStateTransitionedEvent>>() {}));
 
     for (int i = 0; i < configuration.getAlarmHistoryConfiguration().getNumThreads(); i++) {
 

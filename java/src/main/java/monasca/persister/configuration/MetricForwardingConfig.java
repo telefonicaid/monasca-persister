@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Hewlett-Packard Development Company, L.P.
+ * Copyright (c) 2016 Telefónica I+D
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package monasca.persister.consumer;
 
-import com.google.inject.assistedinject.Assisted;
-import monasca.persister.pipeline.ManagedPipeline;
+package monasca.persister.configuration;
 
-public interface KafkaConsumerRunnableBasicFactory<T> {
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-  KafkaConsumerRunnableBasic<T> create(
-      ManagedPipeline<T> pipeline,
-      KafkaChannel kafkaChannel,
-      @Assisted("threadId") String threadId);
+public class MetricForwardingConfig {
 
+  @JsonProperty
+  String remoteEndpoint;
+
+  public String getRemoteEndpoint() { return remoteEndpoint; }
 }
