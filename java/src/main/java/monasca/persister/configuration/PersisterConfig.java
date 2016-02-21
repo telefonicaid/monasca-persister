@@ -74,12 +74,16 @@ public class PersisterConfig extends Configuration {
   @Valid
   @NotNull
   @JsonProperty
-  private final VerticaMetricRepoConfig verticaMetricRepoConfig =
-      new VerticaMetricRepoConfig();
+  private final VerticaMetricRepoConfig verticaMetricRepoConfig = new VerticaMetricRepoConfig();
 
-  public VerticaMetricRepoConfig getVerticaMetricRepoConfig() {
-    return verticaMetricRepoConfig;
-  }
+  public VerticaMetricRepoConfig getVerticaMetricRepoConfig() { return verticaMetricRepoConfig; }
+
+  @Valid
+  @NotNull
+  @JsonProperty
+  private final MetricForwardingConfig metricForwardingConfig = new MetricForwardingConfig();
+
+  public MetricForwardingConfig getMetricForwardingConfig() { return metricForwardingConfig; }
 
   @Valid
   @NotNull

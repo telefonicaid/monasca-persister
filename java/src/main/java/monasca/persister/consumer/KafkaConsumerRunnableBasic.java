@@ -45,7 +45,7 @@ public class KafkaConsumerRunnableBasic<T> implements Runnable {
   public KafkaConsumerRunnableBasic(
       @Assisted KafkaChannel kafkaChannel,
       @Assisted ManagedPipeline<T> pipeline,
-      @Assisted String threadId) {
+      @Assisted("threadId") String threadId) {
 
     this.kafkaChannel = kafkaChannel;
     this.pipeline = pipeline;

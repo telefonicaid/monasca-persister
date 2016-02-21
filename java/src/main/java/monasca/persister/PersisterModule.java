@@ -38,6 +38,8 @@ import monasca.persister.consumer.KafkaConsumer;
 import monasca.persister.consumer.KafkaConsumerFactory;
 import monasca.persister.consumer.KafkaConsumerRunnableBasic;
 import monasca.persister.consumer.KafkaConsumerRunnableBasicFactory;
+import monasca.persister.consumer.KafkaConsumerRunnableExtended;
+import monasca.persister.consumer.KafkaConsumerRunnableExtendedFactory;
 import monasca.persister.dbi.DBIProvider;
 import monasca.persister.pipeline.ManagedPipeline;
 import monasca.persister.pipeline.ManagedPipelineFactory;
@@ -93,49 +95,58 @@ public class PersisterModule extends AbstractModule {
 
     install(
         new FactoryModuleBuilder().implement(
-        new TypeLiteral<KafkaConsumerRunnableBasic<AlarmStateTransitionedEvent>>() {},
-        new TypeLiteral<KafkaConsumerRunnableBasic<AlarmStateTransitionedEvent>>() {})
+            new TypeLiteral<KafkaConsumerRunnableBasic<AlarmStateTransitionedEvent>>() {},
+            new TypeLiteral<KafkaConsumerRunnableBasic<AlarmStateTransitionedEvent>>() {})
             .build(new TypeLiteral<KafkaConsumerRunnableBasicFactory<AlarmStateTransitionedEvent>>() {}));
+
+    // Extension to implement the forwarding of metrics to a remote UDP endpoint
+    install(
+        new FactoryModuleBuilder().implement(
+            new TypeLiteral<KafkaConsumerRunnableExtended<MetricEnvelope[]>>() {},
+            new TypeLiteral<KafkaConsumerRunnableExtended<MetricEnvelope[]>>() {})
+            .build(new TypeLiteral<KafkaConsumerRunnableExtendedFactory<MetricEnvelope[]>>() {}));
 
     install(
         new FactoryModuleBuilder().implement(
-        new TypeLiteral<KafkaConsumer<MetricEnvelope[]>>() {},
-        new TypeLiteral<KafkaConsumer<MetricEnvelope[]>>() {})
+            new TypeLiteral<KafkaConsumer<MetricEnvelope[]>>() {},
+            new TypeLiteral<KafkaConsumer<MetricEnvelope[]>>() {})
             .build(new TypeLiteral<KafkaConsumerFactory<MetricEnvelope[]>>() {}));
 
     install(
         new FactoryModuleBuilder().implement(
-        new TypeLiteral<ManagedPipeline<MetricEnvelope[]>>() {},
-        new TypeLiteral<ManagedPipeline<MetricEnvelope[]>>() {})
+            new TypeLiteral<ManagedPipeline<MetricEnvelope[]>>() {},
+            new TypeLiteral<ManagedPipeline<MetricEnvelope[]>>() {})
             .build(new TypeLiteral<ManagedPipelineFactory<MetricEnvelope[]>>() {}));
 
     install(
         new FactoryModuleBuilder().implement(
-        new TypeLiteral<ManagedPipeline<AlarmStateTransitionedEvent>>() {},
-        new TypeLiteral<ManagedPipeline<AlarmStateTransitionedEvent>>() {})
+            new TypeLiteral<ManagedPipeline<AlarmStateTransitionedEvent>>() {},
+            new TypeLiteral<ManagedPipeline<AlarmStateTransitionedEvent>>() {})
             .build(new TypeLiteral<ManagedPipelineFactory<AlarmStateTransitionedEvent>>() {}));
 
     install(
         new FactoryModuleBuilder().implement(
-        new TypeLiteral<ManagedConsumer<AlarmStateTransitionedEvent>>() {},
-        new TypeLiteral<ManagedConsumer<AlarmStateTransitionedEvent>>() {})
+            new TypeLiteral<ManagedConsumer<AlarmStateTransitionedEvent>>() {},
+            new TypeLiteral<ManagedConsumer<AlarmStateTransitionedEvent>>() {})
             .build(new TypeLiteral<ManagedConsumerFactory<AlarmStateTransitionedEvent>>() {}));
 
     install(
         new FactoryModuleBuilder().implement(
-        new TypeLiteral<KafkaConsumer<AlarmStateTransitionedEvent>>() {},
-        new TypeLiteral<KafkaConsumer<AlarmStateTransitionedEvent>>() {})
+            new TypeLiteral<KafkaConsumer<AlarmStateTransitionedEvent>>() {},
+            new TypeLiteral<KafkaConsumer<AlarmStateTransitionedEvent>>() {})
             .build(new TypeLiteral<KafkaConsumerFactory<AlarmStateTransitionedEvent>>() {}));
 
     install(
         new FactoryModuleBuilder().implement(
-        new TypeLiteral<ManagedConsumer<MetricEnvelope[]>>() {},
-        new TypeLiteral<ManagedConsumer<MetricEnvelope[]>>() {})
+            new TypeLiteral<ManagedConsumer<MetricEnvelope[]>>() {},
+            new TypeLiteral<ManagedConsumer<MetricEnvelope[]>>() {})
             .build(new TypeLiteral<ManagedConsumerFactory<MetricEnvelope[]>>() {}));
 
     install(
         new FactoryModuleBuilder().implement(
-            KafkaChannel.class, KafkaChannel.class).build(KafkaChannelFactory.class));
+            KafkaChannel.class,
+            KafkaChannel.class)
+            .build(KafkaChannelFactory.class));
 
     if (config.getDatabaseConfiguration().getDatabaseType().equalsIgnoreCase(VERTICA)) {
 

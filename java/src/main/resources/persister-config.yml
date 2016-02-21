@@ -58,6 +58,10 @@ influxDbConfiguration:
   user:  root
   password: root
 
+# Uncomment to forward all metrics to a remote UDP endpoint
+metricForwardingConfig:
+  remoteEndpoint: 192.168.10.4:5000
+
 # Uncomment if databaseType is vertica
 #dataSourceFactory:
 #  driverClass: com.vertica.jdbc.Driver
