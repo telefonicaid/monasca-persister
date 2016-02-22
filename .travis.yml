@@ -8,3 +8,6 @@ install:
 - ./run_maven.sh none -DskipTests=true -B -V -q install
 test:
 - ./run_maven.sh none -B -q test
+env:
+  global:
+  - CI_USER=$USER
