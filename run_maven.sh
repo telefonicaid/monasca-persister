@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ $# -ne 3 ]; then
+if [ $# -lt 3 ]; then
     echo "Usage: $(basename $0) <monasca-common-version> <java-args-property> <goal> ..." 1>&2
     exit 1
 fi

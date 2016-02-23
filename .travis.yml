@@ -5,11 +5,10 @@ jdk:
 before_install:
 - python travis.py --mirrors
 install:
-- mvn install -DskipTests=true -B -V -q
+- ./run_maven.sh $MONASCA_COMMON_VERSION none -DskipTests=true -B -V -q install
 test:
-- mvn test -B -q
+- ./run_maven.sh $MONASCA_COMMON_VERSION none -B -q test
 env:
   global:
-  - SONATYPE_USERNAME=deployment
-after_success:
-- '[[ $TRAVIS_REPO_SLUG == telefonicaid* ]] && [[ $TRAVIS_PULL_REQUEST == "false" ]] && [[ $TRAVIS_BRANCH == "master" ]] && { python travis.py --deploy; mvn deploy -DskipTests=true; };'
+  - CI_USER=$USER
+  - MONASCA_COMMON_VERSION=1.1.0
