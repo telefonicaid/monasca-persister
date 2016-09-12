@@ -38,8 +38,14 @@ done
 
 # Build monasca-common
 if [ $RUN_BUILD = "true" ]; then
+    if [ ! -z "$ZUUL_BRANCH" ]; then
+        BRANCH=${ZUUL_BRANCH}
+    else
+        BRANCH=${ZUUL_REF}
+    fi
+
     echo "Building monasca-common ${COMMON_VERSION}..."
-    ( cd common; ./build_common.sh ${MVN} ${COMMON_VERSION} )
+    ( cd common; ./build_common.sh ${MVN} ${COMMON_VERSION} ${BRANCH} )
     RC=$?
     if [ $RC != 0 ]; then
         exit $RC
@@ -47,8 +53,7 @@ if [ $RUN_BUILD = "true" ]; then
 fi
 
 # Invoke the maven 3 on the real pom.xml
-GIT_REV=$(git rev-list HEAD --max-count 1 --abbrev=0 --abbrev-commit)
-( cd java; ${MVN} -DgitRevision="${GIT_REV}" $* )
+( cd java; ${MVN} -DgitRevision=`git rev-list HEAD --max-count 1 --abbrev=0 --abbrev-commit` $* )
 RC=$?
 
 # Copy the jars where the publisher will find them
