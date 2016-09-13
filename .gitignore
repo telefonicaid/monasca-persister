@@ -1,5 +1,5 @@
 monasca-common*
-target
+target/
 *.classpath
 *.project
 *.settings/

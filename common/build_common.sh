@@ -2,8 +2,9 @@
 
 MVN=$1
 VERSION=$2
+BRANCH=$3
 if [ -z "$MVN" -o -z "$VERSION" ]; then
-    echo "Usage: $(basename $0) <mvn> <version>" 1>&2
+    echo "Usage: $(basename $0) <mvn> <version> [<branch>]" 1>&2
     exit 1
 fi
 
@@ -27,20 +28,23 @@ if [ ! -r "${POM_FILE}" ]; then
     PATH=$(dirname $MVN):$PATH
 fi
 
-# Release of monasca-common to be downloaded
-case "$VERSION" in
-1.1.0)  TAG=0.0.6;;
-1.0.0)  TAG=2015.1;;
-*)      TAG=master;;
-esac
+# Refspec of monasca-common sources to be downloaded
+REFSPEC=$BRANCH
+if [ -z "$BRANCH" ]; then
+    case "$VERSION" in
+    1.1.0)  REFSPEC=0.0.6;;
+    1.0.0)  REFSPEC=2015.1;;
+    *)      REFSPEC=master;;
+    esac
+fi
 
 # This should only be done on the stack forge system by $CI_USER ("jenkins")
 if [ "${BUILD_COMMON}" = "true" ]; then
-    if [ ! -d monasca-common-$TAG ]; then
-        curl -sL https://github.com/openstack/monasca-common/archive/${TAG}.tar.gz -o monasca-common.tar.gz
+    if [ ! -d monasca-common-$REFSPEC ]; then
+        curl -sL https://github.com/openstack/monasca-common/archive/${REFSPEC}.tar.gz -o monasca-common.tar.gz
         tar -xzf monasca-common.tar.gz
     fi
-    cd monasca-common-$TAG
+    cd monasca-common-$REFSPEC
     ${MVN} clean
     ${MVN} install
 fi
