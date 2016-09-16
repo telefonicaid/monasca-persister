@@ -126,6 +126,9 @@ logging:
       # The timezone used to format dates. HINT: USE THE DEFAULT, UTC.
       timeZone: UTC
 
+      # The format including msgId from logger's mapped diagnostic context (MDC)
+      logFormat: "%level  [%d{YYYY-MM-dd HH:mm:ss,SSS}] [msgId=%X{msgId:-N/A}] %logger: %msg%n"
+
       # Uncomment to approximately match the default log format of the python
       # Openstack components. %pid is unavoidably formatted with [brackets],
       # which are hard-coded in dropwizard's logging module.
