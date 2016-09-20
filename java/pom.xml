@@ -6,7 +6,7 @@
 
     <groupId>monasca</groupId>
     <artifactId>monasca-persister</artifactId>
-    <version>1.1.0-Release-0.1.14-FIWARE</version>
+    <version>1.0.0.1</version>
     <url>http://github.com/telefonicaid/monasca-persister</url>
     <packaging>jar</packaging>
 

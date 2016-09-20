@@ -23,14 +23,17 @@ import monasca.persister.pipeline.ManagedPipeline;
 import monasca.persister.repository.RepoException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
+import java.util.UUID;
 
 public class KafkaConsumerRunnableExtended<T> extends KafkaConsumerRunnableBasic<T> {
 
   private static final Logger logger = LoggerFactory.getLogger(KafkaConsumerRunnableExtended.class);
+  private static final String MSG_ID = "msgId";
 
   private InetSocketAddress remoteEndpoint;
   private DatagramSocket udpSocket;
@@ -62,16 +65,21 @@ public class KafkaConsumerRunnableExtended<T> extends KafkaConsumerRunnableBasic
   protected void publishEvent(final String msg) throws RepoException {
 
     if (msg == null) {
-      logger.warn("Ignoring null metric");
+      logger.debug("Ignoring null metric");
     } else {
       super.publishEvent(msg);
       if (remoteEndpoint != null) {
+        String uuid = UUID.randomUUID().toString();
+        String data = msg.replace("\"meta\":{", "\"meta\":{" + "\"" + MSG_ID + "\":\"" + uuid + "\",");
+        MDC.put(MSG_ID, uuid);
         try {
-          DatagramPacket packet = new DatagramPacket(msg.getBytes(), msg.length(), remoteEndpoint);
+          DatagramPacket packet = new DatagramPacket(data.getBytes(), data.length(), remoteEndpoint);
           udpSocket.send(packet);
-          logger.debug("Metric sent to {}: \"{}\"", remoteEndpoint.toString(), msg);
+          logger.debug("Metric sent to {}", remoteEndpoint.toString());
         } catch (Exception e) {
-          logger.error("Could not send metric to {}: \"{}\"", remoteEndpoint.toString(), msg);
+          logger.error("Could not send metric to {}", remoteEndpoint.toString());
+        } finally {
+          MDC.remove(MSG_ID);
         }
       }
     }

@@ -64,9 +64,9 @@ if [ $RUN_BUILD = "true" ]; then
 fi
 
 # Result artifact
-if [ $RC -eq 0 -a -r target/*-shaded.jar ]; then
-    ARTIFACT_JAR=$(ls -1rt target/*-shaded.jar | tail -1)
-    ARTIFACT_VER=$(awk -F'[<>]' '/version/ { print $3; exit }' pom.xml)
+ARTIFACT_JAR=$(ls -1rt target/*-shaded.jar | tail -1)
+ARTIFACT_VER=$(awk -F'[<>]' '/version/ { print $3; exit }' pom.xml)
+if [ $RC -eq 0 -a -n "$ARTIFACT_JAR" ]; then
     cp $ARTIFACT_JAR target/monasca-persister.jar
     printf "\nmonasca-persister $ARTIFACT_VER generated at target/monasca-persister.jar\n\n"
 fi

@@ -121,7 +121,8 @@ public class KafkaConsumerRunnableBasic<T> implements Runnable {
 
             final String msg = new String(it.next().message());
 
-            logger.debug("[{}]: {}", this.threadId, msg);
+            /* skipped: this message is the same as shown by processEnvelope() when publishing the event */
+            /* logger.debug("[{}]: {}", this.threadId, msg); */
 
             publishEvent(msg);
 
